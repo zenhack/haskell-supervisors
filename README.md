@@ -1,3 +1,5 @@
+[![hackage][hackage-img]][hackage]
+
 # Haskell Supervisors
 
 The `supervisors` package provides a useful abstraction for managing the
@@ -33,3 +35,6 @@ used to safely spawn threads while guaranteeing that:
 [bracket]: http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception-Base.html#v:bracket
 [resourcet]: https://hackage.haskell.org/package/resourcet
 [capnp]: https://hackage.haskell.org/package/capnp
+
+[hackage-img]: https://img.shields.io/hackage/v/supervisors.svg
+[hackage]: https://hackage.haskell.org/package/supervisors
