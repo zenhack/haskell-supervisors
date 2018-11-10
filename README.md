@@ -16,6 +16,11 @@ not reclaimed until the entire subtree finishes.
 But sometimes, your concurrency patterns don't fit neatly into a tree;
 that is what this package is for.
 
+This package was originally written for use in the rpc layer of the
+[capnp][capnp] package, where the various threads handling rpc calls
+can have essentially arbitrary lifetimes, but we often want to make
+sure they are all shut down when a connection is closed.
+
 ## Example
 
 ```haskell
@@ -27,3 +32,4 @@ import Supervisors (withSupervisor, supervise)
 [async]: https://hackage.haskell.org/package/async
 [bracket]: http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception-Base.html#v:bracket
 [resourcet]: https://hackage.haskell.org/package/resourcet
+[capnp]: https://hackage.haskell.org/package/capnp
