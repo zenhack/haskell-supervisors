@@ -29,14 +29,6 @@ used to safely spawn threads while guaranteeing that:
 * Child threads can terminate in any order, and memory usage will always
   be proportional to the number of *live* supervised threads.
 
-## Example
-
-```haskell
-import Supervisors (withSupervisor, supervise)
-
--- TODO
-```
-
 [async]: https://hackage.haskell.org/package/async
 [bracket]: http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception-Base.html#v:bracket
 [resourcet]: https://hackage.haskell.org/package/resourcet
