@@ -17,9 +17,7 @@ threads to the 'Supervisor' from inside an 'STM' transaction.
 -}
 module Supervisors
     ( Supervisor
-    , TSupervisor
     , withSupervisor
-    , newTSupervisor
     , supervise
     , superviseSTM
     ) where
@@ -37,24 +35,24 @@ import UnliftIO.Exception
 
 import qualified Data.Set as S
 
-newtype Supervisor = Supervisor (TVar (Either SomeException (S.Set ThreadId)))
-
--- | A handle to a supervisor that can be used inside of 'STM'.
-newtype TSupervisor = TSupervisor (TQueue (IO ()))
+data Supervisor = Supervisor
+    { stateVar :: TVar (Either SomeException (S.Set ThreadId))
+    , runQ     :: TQueue (IO ())
+    }
 
 newSupervisor :: IO Supervisor
-newSupervisor = Supervisor <$> newTVarIO (Right S.empty)
-
-newTSupervisor :: Supervisor -> IO TSupervisor
-newTSupervisor sup = do
-    queue <- newTQueueIO
-    supervise sup $ forever $
-        atomically (readTQueue queue) >>= supervise sup
-    pure $ TSupervisor queue
+newSupervisor = do
+    stateVar <- newTVarIO $ Right S.empty
+    runQ <- newTQueueIO
+    let sup = Supervisor
+            { stateVar = stateVar
+            , runQ = runQ
+            }
+    pure sup
 
 runSupervisor :: Supervisor -> IO ()
-runSupervisor sup =
-    forever (threadDelay (1000 * 1000 * 1000))
+runSupervisor sup@Supervisor{runQ=q} =
+    forever (atomically (readTQueue q) >>= supervise sup)
     `withException`
     \e -> throwKids sup (e :: SomeException)
 
@@ -65,7 +63,7 @@ withSupervisor f = do
 
 -- | Throw an exception to all of a supervisor's children, using 'throwTo'.
 throwKids :: Exception e => Supervisor -> e -> IO ()
-throwKids (Supervisor stateVar) exn =
+throwKids Supervisor{stateVar=stateVar} exn =
     bracket
         (atomically $ readTVar stateVar >>= \case
             Left _ ->
@@ -80,7 +78,7 @@ throwKids (Supervisor stateVar) exn =
 -- supervisor receives an exception, the exception will also be raised in the
 -- child thread.
 supervise :: Supervisor -> IO () -> IO ()
-supervise (Supervisor stateVar) task =
+supervise Supervisor{stateVar=stateVar} task =
     void $ forkIO $ bracket_ addMe removeMe task
   where
     -- | Add our ThreadId to the supervisor.
@@ -113,5 +111,5 @@ supervise (Supervisor stateVar) task =
                 -- in that case we would still leak @me@.
                 Right $! S.delete me kids
 
-superviseSTM :: TSupervisor -> IO () -> STM ()
-superviseSTM (TSupervisor queue) = writeTQueue queue
+superviseSTM :: Supervisor -> IO () -> STM ()
+superviseSTM Supervisor{runQ=q} = writeTQueue q
