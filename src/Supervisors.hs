@@ -11,9 +11,6 @@ spawn threads while guaranteeing that:
   killed.
 * Child threads can terminate in any order, and memory usage will always
   be proportional to the number of *live* supervised threads.
-
-We also provide a 'TSupervisor' abstraction, which can be used to attach
-threads to the 'Supervisor' from inside an 'STM' transaction.
 -}
 module Supervisors
     ( Supervisor
