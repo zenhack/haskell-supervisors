@@ -2,7 +2,7 @@ cabal-version:       2.2
 name:                supervisors
 version:             0.1.0.0
 synopsis:            TODO
--- description:
+description:         Monitor groups of threads with non-hierarchical lifetimes.
 homepage:            https://github.com/zenhack/haskell-supervisors
 license:             MIT
 license-file:        LICENSE
