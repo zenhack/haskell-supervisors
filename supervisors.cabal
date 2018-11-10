@@ -1,8 +1,24 @@
 cabal-version:       2.2
 name:                supervisors
 version:             0.1.0.0
-synopsis:            TODO
-description:         Monitor groups of threads with non-hierarchical lifetimes.
+synopsis:            Monitor groups of threads with non-hierarchical lifetimes.
+description:
+  The @supervisors@ package provides a useful abstraction for managing the
+  groups of Haskell threads, which may not have a strictly hierarchical
+  structure to their lifetimes.
+  .
+  Concretely, the library provides a `Supervisor` construct, which can be
+  used to safely spawn threads while guaranteeing that:
+  .
+  * When the supervisor is killed, all of the threads it supervises will be
+    killed.
+  * Child threads can terminate in any order, and memory usage will always
+    be proportional to the number of *live* supervised threads.
+  .
+  One way to think of it is that @supervisors@ is to @async@ as
+  @resourcet@ is to @bracket@.
+  .
+  See the README and module documentation for more information.
 homepage:            https://github.com/zenhack/haskell-supervisors
 license:             MIT
 license-file:        LICENSE
