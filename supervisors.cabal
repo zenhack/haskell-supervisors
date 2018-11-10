@@ -11,7 +11,10 @@ maintainer:          ian@zenhack.net
 copyright:           2018 Ian Denhardt
 category:            Concurrency
 build-type:          Simple
-extra-source-files:  CHANGELOG.md
+extra-source-files:
+    CHANGELOG.md
+  , README.md
+  , .gitignore
 
 common shared-opts
   build-depends:
