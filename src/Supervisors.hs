@@ -32,11 +32,13 @@ import UnliftIO.Exception
 
 import qualified Data.Set as S
 
+-- | A handle for a supervisor, which montiors a pool of threads.
 data Supervisor = Supervisor
     { stateVar :: TVar (Either SomeException (S.Set ThreadId))
     , runQ     :: TQueue (IO ())
     }
 
+-- | Start a new supervisor, and return it.
 newSupervisor :: IO Supervisor
 newSupervisor = do
     stateVar <- newTVarIO $ Right S.empty
@@ -47,12 +49,17 @@ newSupervisor = do
             }
     pure sup
 
+-- | Run the logic associated with the supervisor. This never returns until
+-- the supervisor receives an (asynchronous) exception. When it does return,
+-- all of the supervised threads will be killed.
 runSupervisor :: Supervisor -> IO ()
 runSupervisor sup@Supervisor{runQ=q} =
     forever (atomically (readTQueue q) >>= supervise sup)
     `withException`
     \e -> throwKids sup (e :: SomeException)
 
+-- | Run an IO action with access to a supervisor. Threads spawned using the
+-- supervisor will be killed when the action returns.
 withSupervisor :: (Supervisor -> IO ()) -> IO ()
 withSupervisor f = do
     sup <- newSupervisor
@@ -108,5 +115,7 @@ supervise Supervisor{stateVar=stateVar} task =
                 -- in that case we would still leak @me@.
                 Right $! S.delete me kids
 
+-- | Like 'supervise', but can be used from inside 'STM'. The thread will be
+-- spawned if and only if the transaction commits.
 superviseSTM :: Supervisor -> IO () -> STM ()
 superviseSTM Supervisor{runQ=q} = writeTQueue q
