@@ -19,6 +19,9 @@ description:
   One way to think of it is that @supervisors@ is to @async@ as
   @resourcet@ is to @bracket@.
   .
+  Note that this package is EXPERIMENTAL; it needs more careful testing before
+  I can earnestly recommend relying on it.
+  .
   See the README and module documentation for more information.
 homepage:            https://github.com/zenhack/haskell-supervisors
 bug-reports:         https://github.com/zenhack/haskell-supervisors/issues
