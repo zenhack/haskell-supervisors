@@ -21,6 +21,14 @@ This package was originally written for use in the rpc layer of the
 can have essentially arbitrary lifetimes, but we often want to make
 sure they are all shut down when a connection is closed.
 
+Concretely, the library provides a `Supervisor` construct, which can be
+used to safely spawn threads while guaranteeing that:
+
+* When the supervisor is killed, all of the threads it supervises will be
+  killed.
+* Child threads can terminate in any order, and memory usage will always
+  be proportional to the number of *live* supervised threads.
+
 ## Example
 
 ```haskell
