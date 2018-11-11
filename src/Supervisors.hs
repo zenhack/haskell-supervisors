@@ -60,7 +60,7 @@ runSupervisor sup@Supervisor{runQ=q} =
 
 -- | Run an IO action with access to a supervisor. Threads spawned using the
 -- supervisor will be killed when the action returns.
-withSupervisor :: (Supervisor -> IO ()) -> IO ()
+withSupervisor :: (Supervisor -> IO a) -> IO a
 withSupervisor f = do
     sup <- newSupervisor
     withAsync (runSupervisor sup) $ const (f sup)
