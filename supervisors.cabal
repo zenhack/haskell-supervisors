@@ -39,7 +39,7 @@ extra-source-files:
 
 common shared-opts
   build-depends:
-      base ^>=4.12
+      base >=4.11 && <4.13
 
 library
   import: shared-opts
