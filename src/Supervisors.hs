@@ -21,8 +21,7 @@ module Supervisors
 
 import Control.Concurrent.STM
 
-import Control.Concurrent
-    (ThreadId, forkIO, myThreadId, threadDelay, throwTo)
+import Control.Concurrent       (ThreadId, forkIO, myThreadId, throwTo)
 import Control.Concurrent.Async (withAsync)
 import Control.Exception.Safe
     (Exception, SomeException, bracket, bracket_, toException, withException)
