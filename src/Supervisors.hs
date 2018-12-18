@@ -19,16 +19,15 @@ module Supervisors
     , superviseSTM
     ) where
 
-import UnliftIO.STM
+import Control.Concurrent.STM
 
 import Control.Concurrent
     (ThreadId, forkIO, myThreadId, threadDelay, throwTo)
 import Control.Concurrent.Async (withAsync)
-import Control.Concurrent.STM   (throwSTM)
+import Control.Exception.Safe
+    (Exception, SomeException, bracket, bracket_, toException, withException)
 import Control.Monad            (forever, void)
 import Data.Foldable            (traverse_)
-import UnliftIO.Exception
-    (Exception, SomeException, bracket, bracket_, toException, withException)
 
 import qualified Data.Set as S
 

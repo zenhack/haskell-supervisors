@@ -48,7 +48,7 @@ library
   build-depends:
       stm ^>=2.5
     , containers >=0.5.9 && <0.7
-    , unliftio ^>=0.2.8
+    , safe-exceptions ^>= 0.1.7
     , async ^>=2.2.1
   default-language:    Haskell2010
 
