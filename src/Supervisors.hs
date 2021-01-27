@@ -24,9 +24,15 @@ import Control.Concurrent.STM
 import Control.Concurrent       (ThreadId, forkIO, myThreadId, throwTo)
 import Control.Concurrent.Async (withAsync)
 import Control.Exception.Safe
-    (Exception, SomeException, bracket, bracket_, toException, withException)
+    ( Exception
+    , SomeException
+    , bracket
+    , bracket_
+    , finally
+    , toException
+    , withException
+    )
 import Control.Monad            (forever, void)
-import Data.Foldable            (traverse_)
 
 import qualified Data.Set as S
 
@@ -73,7 +79,13 @@ throwKids Supervisor{stateVar=stateVar} exn =
             Right kids -> do
                 writeTVar stateVar $ Left (toException exn)
                 pure kids)
-        (traverse_ (`throwTo` exn))
+        (foldr
+            -- important: chain these together with `finally`,
+            -- rather than (>>=) or friends, so that if one
+            -- throws an exception we still run the others.
+            (\kid old -> throwTo kid exn `finally` old)
+            (pure ())
+        )
         (\_ -> pure ())
 
 -- | Launch the IO action in a thread, monitored by the 'Supervisor'. If the
